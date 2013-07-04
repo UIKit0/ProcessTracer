@@ -1,47 +1,33 @@
 # Makefile for ProcessTracer
 
-!if "$(PLATFORM)" == ""
-PLATFORM=x86
-!endif
+PREFIX = x86_64-w64-mingw32-
+CC = $(PREFIX)gcc
+CXX = $(PREFIX)g++
 
-all : $(PLATFORM) $(PLATFORM)\ProcessTracer.exe $(PLATFORM)\TrivialProgram.exe $(PLATFORM)\BadProgram.exe
+CPPFLAGS = -D_WIN32_WINNT=0x0601 -DWINVER=0x0601
+CFLAGS = -Os -Wall -g
+CXXFLAGS = $(CFLAGS)
+LDFLAGS = -static-libgcc -static-libstdc++
+
+LIBS = -ldbghelp
+
+all : ProcessTracer.exe TrivialProgram.exe BadProgram.exe
 
 clean :
-	@-del /s/q ProcessTracer.zip $(PLATFORM)\*
-
-zip :
-	if not exist ProcessTracer\* mkdir ProcessTracer
-	del ProcessTracer\* /q
-	del ProcessTracer.zip
-	copy BadProgram.cpp ProcessTracer\*
-	copy Makefile ProcessTracer\*
-	copy ProcessTracer.cpp ProcessTracer\*
-	copy SimpleSymbolEngine.cpp ProcessTracer\*
-	copy SimpleSymbolEngine.h ProcessTracer\*
-	copy TrivialProgram.cpp ProcessTracer\*
-	zip ProcessTracer.zip ProcessTracer/*
+	$(RM) *.exe *.o
 
 # Rules
 
-$(PLATFORM) :
-	md $(PLATFORM)
+%.o: %.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 
-.cpp{$(PLATFORM)}.obj::
-	cl /nologo /Fo$(PLATFORM)\ /c /Zi /EHsc /GR /MD /W4 $<
-
-$(PLATFORM)\ProcessTracer.exe : $(PLATFORM)\$(*B).obj
-	cl /nologo /Fe$@ /Zi $**
-
-$(PLATFORM)\TrivialProgram.exe : $(PLATFORM)\$(*B).obj 
-	cl /nologo /Fe$@ $** 
-
-$(PLATFORM)\BadProgram.exe : $(PLATFORM)\$(*B).obj 
-	cl /nologo /Fe$@ /Zi $**
+%.exe: %.o
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $(LDFLAGS) $^ $(LIBS)
 
 # Dependencies
 
-$(PLATFORM)\ProcessTracer.obj : SimpleSymbolEngine.h
+ProcessTracer.o: SimpleSymbolEngine.h
 
-$(PLATFORM)\SimpleSymbolEngine.obj : SimpleSymbolEngine.h
+SimpleSymbolEngine.o: SimpleSymbolEngine.h
 
-$(PLATFORM)\ProcessTracer.exe : $(PLATFORM)\SimpleSymbolEngine.obj
+ProcessTracer.exe: SimpleSymbolEngine.o

@@ -22,10 +22,16 @@ COPYRIGHT
     Please report bugs to rogero@howzatt.demon.co.uk.
 */
 
+#ifdef __MINGW32__
+#include <_mingw_mac.h>
+#endif
+
 #ifdef _M_X64
 #include <ntstatus.h>
 #define WIN32_NO_STATUS
 #endif // _M_X64
+
+#include <stdio.h>
 
 #include <windows.h>
 
@@ -158,7 +164,7 @@ void ProcessTracer::OnCreateProcess(DWORD processId, DWORD threadId, CREATE_PROC
 
   eng.loadModule(createProcess.hFile, createProcess.lpBaseOfImage, std::string());
 
-  std::cout << "CREATE PROCESS " << processId << " at " << eng.addressToString(createProcess.lpStartAddress) << std::endl;
+  std::cout << "CREATE PROCESS " << processId << " at " << eng.addressToString((PVOID)createProcess.lpStartAddress) << std::endl;
 
   if (createProcess.hFile)
   {
@@ -177,7 +183,7 @@ void ProcessTracer::OnExitProcess(DWORD threadId, EXIT_PROCESS_DEBUG_INFO const 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 void ProcessTracer::OnCreateThread(DWORD threadId, CREATE_THREAD_DEBUG_INFO const & createThread)
 {
-  std::cout << "CREATE THREAD " << threadId << " at " << eng.addressToString(createThread.lpStartAddress) << std::endl;
+  std::cout << "CREATE THREAD " << threadId << " at " << eng.addressToString((PVOID)createThread.lpStartAddress) << std::endl;
 
   threadHandles[threadId] = createThread.hThread;
 }

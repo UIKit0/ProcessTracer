@@ -36,7 +36,9 @@ COPYRIGHT
 
 #include <dbghelp.h>
 
+#ifdef _MSC_VER
 #pragma comment( lib, "dbghelp" )
+#endif
 
 namespace
 {
@@ -151,10 +153,12 @@ void SimpleSymbolEngine::unloadModule(PVOID baseAddress)
 // StackTrace: try to trace the stack to the given output
 void SimpleSymbolEngine::stackTrace(HANDLE hThread, std::ostream & os )
 {
-  CONTEXT context = {0};
+  CONTEXT context;
+  ZeroMemory(&context, sizeof context);
   PVOID pContext = &context;
 
-  STACKFRAME64 stackFrame = {0};
+  STACKFRAME64 stackFrame;
+  ZeroMemory(&stackFrame, sizeof stackFrame);
 
 #ifdef _M_IX86
   DWORD const machineType = IMAGE_FILE_MACHINE_I386;
