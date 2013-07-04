@@ -22,8 +22,6 @@ COPYRIGHT
     Please report bugs to rogero@howzatt.demon.co.uk.
 */
 
-static char const szRCSID[] = "$Id: ProcessTracer.cpp 84 2011-11-13 00:29:15Z Roger $";
-
 #ifdef _M_X64
 #include <ntstatus.h>
 #define WIN32_NO_STATUS

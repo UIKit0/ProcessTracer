@@ -38,8 +38,6 @@ COPYRIGHT
 
 #pragma comment( lib, "dbghelp" )
 
-static char const szRCSID[] = "$Id: SimpleSymbolEngine.cpp 88 2011-11-19 14:10:18Z Roger $";
-
 namespace
 {
   // Helper function to read up to maxSize bytes from address in target process
