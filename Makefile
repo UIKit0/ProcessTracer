@@ -1,6 +1,7 @@
 # Makefile for ProcessTracer
 
-PREFIX = x86_64-w64-mingw32-
+ARCH ?= i686
+PREFIX ?= $(ARCH)-w64-mingw32-
 CC = $(PREFIX)gcc
 CXX = $(PREFIX)g++
 
